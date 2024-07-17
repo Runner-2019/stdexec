@@ -56,7 +56,7 @@ namespace exec {
         __operation_base<_Iterator, _Sentinel>* __parent_;
 
         void start() & noexcept {
-          stdexec::set_value(static_cast<_ItemRcvr&&>(__rcvr_), *__parent_->__iterator_++);
+          stdexec::set_value(static_cast<_ItemRcvr&&>(__rcvr_), *__parent_->__iterator_);
         }
       };
     };
@@ -96,6 +96,7 @@ namespace exec {
         stdexec::__t<__operation<_Range, _ReceiverId>>* __op_;
 
         void set_value() noexcept {
+          ++__op_->__iterator_;
           __op_->__start_next();
         }
 
@@ -125,6 +126,14 @@ namespace exec {
       trampoline_scheduler __scheduler_{};
 
       void __start_next() noexcept {
+        // using token_type = stdexec::stop_token_of_t<stdexec::env_of_t<_Receiver>>;
+        // if constexpr (!stdexec::unstoppable_token<token_type>) {
+        //   auto token = stdexec::get_stop_token(stdexec::get_env(__rcvr_));
+        //   if (token.stop_requested()) {
+        //     stdexec::set_stopped(static_cast<_Receiver&&>(__rcvr_));
+        //     return;
+        //   }
+        // }
         if (this->__iterator_ == this->__sentinel_) {
           stdexec::set_value(static_cast<_Receiver&&>(__rcvr_));
         } else {

@@ -119,9 +119,9 @@ namespace exec {
   } // namespace __sequence_sndr
 
   template <class _Sender>
-  concept __enable_sequence_sender =                  //
-    requires { typename _Sender::sender_concept; } && //
-    stdexec::same_as<typename _Sender::sender_concept, sequence_sender_t>;
+  concept __enable_sequence_sender =               //
+    requires { typename _Sender::sender_concept; } //
+    && stdexec::derived_from<typename _Sender::sender_concept, sequence_sender_t>;
 
   template <class _Sender>
   inline constexpr bool enable_sequence_sender = __enable_sequence_sender<_Sender>;
@@ -196,10 +196,10 @@ namespace exec {
   using item_types_of_t =
     decltype(get_item_types(stdexec::__declval<_Sender>(), stdexec::__declval<_Env>()...));
 
-  template <class _Sender, class... _Env>
-  concept sequence_sender =                 //
-    stdexec::sender_in<_Sender, _Env...> && //
-    enable_sequence_sender<stdexec::__decay_t<_Sender>>;
+  template <class _Sender>
+  concept sequence_sender =  //
+    stdexec::sender<_Sender> //
+    && enable_sequence_sender<stdexec::__decay_t<_Sender>>;
 
   template <class _Sender, class... _Env>
   concept has_sequence_item_types = requires(_Sender&& __sndr, _Env&&... __env) {
@@ -210,7 +210,7 @@ namespace exec {
   concept sequence_sender_in =                   //
     stdexec::sender_in<_Sender, _Env...> &&      //
     has_sequence_item_types<_Sender, _Env...> && //
-    sequence_sender<_Sender, _Env...>;
+    sequence_sender<_Sender>;
 
   template <class _Receiver>
   struct _WITH_RECEIVER_ { };
