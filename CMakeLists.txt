@@ -403,7 +403,8 @@ if(STDEXEC_BUILD_DOCS)
 endif()
 
 # Configure test executables
-if(BUILD_TESTING)
+# if(BUILD_TESTING)
+if(TRUE)
     add_subdirectory(test)
 endif()
 
