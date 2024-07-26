@@ -196,10 +196,10 @@ namespace exec {
   using item_types_of_t =
     decltype(get_item_types(stdexec::__declval<_Sender>(), stdexec::__declval<_Env>()...));
 
-  template <class _Sender, class... _Env>
-  concept sequence_sender =                 //
-    stdexec::sender_in<_Sender, _Env...> && //
-    enable_sequence_sender<stdexec::__decay_t<_Sender>>;
+  template <class _Sender>
+  concept sequence_sender =  //
+    stdexec::sender<_Sender> //
+    && enable_sequence_sender<stdexec::__decay_t<_Sender>>;
 
   template <class _Sender, class... _Env>
   concept has_sequence_item_types = requires(_Sender&& __sndr, _Env&&... __env) {
@@ -210,7 +210,7 @@ namespace exec {
   concept sequence_sender_in =                   //
     stdexec::sender_in<_Sender, _Env...> &&      //
     has_sequence_item_types<_Sender, _Env...> && //
-    sequence_sender<_Sender, _Env...>;
+    sequence_sender<_Sender>;
 
   template <class _Receiver>
   struct _WITH_RECEIVER_ { };

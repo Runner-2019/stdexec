@@ -41,12 +41,12 @@ namespace exec {
         using __id = __receiver;
         __operation_base<_Receiver, _Adaptor>* __op_;
 
-        template <same_as<set_next_t> _SetNext, same_as<__t> _Self, class _Item>
+        template <class _Item>
           requires __callable<_Adaptor&, _Item>
-                && __callable<exec::set_next_t, _Receiver&, __call_result_t<_Adaptor&, _Item>>
-        friend auto tag_invoke(_SetNext, _Self& __self, _Item&& __item) //
+                  && __callable<exec::set_next_t, _Receiver&, __call_result_t<_Adaptor&, _Item>>
+        friend auto tag_invoke(exec::set_next_t, __t& __self, _Item&& __item) //
           noexcept(
-            __nothrow_callable<_SetNext, _Receiver&, __call_result_t<_Adaptor&, _Item>> //
+            __nothrow_callable<exec::set_next_t, _Receiver&, __call_result_t<_Adaptor&, _Item>> //
             && __nothrow_callable<_Adaptor&, _Item>)
             -> next_sender_of_t<_Receiver, __call_result_t<_Adaptor&, _Item>> {
           return exec::set_next(
@@ -86,8 +86,8 @@ namespace exec {
 
         __t(_Sender&& __sndr, _Receiver __rcvr, _Adaptor __adaptor)
           : __operation_base<
-            _Receiver,
-            _Adaptor>{static_cast<_Receiver&&>(__rcvr), static_cast<_Adaptor&&>(__adaptor)}
+              _Receiver,
+              _Adaptor>{static_cast<_Receiver&&>(__rcvr), static_cast<_Adaptor&&>(__adaptor)}
           , __op_{exec::subscribe(
               static_cast<_Sender&&>(__sndr),
               stdexec::__t<__receiver<_ReceiverId, _Adaptor>>{this})} {
@@ -190,8 +190,8 @@ namespace exec {
         requires __callabale_adaptor_for<
                    __data_of<_Self>,
                    item_types_of_t<__child_of<_Self>, env_of_t<_Receiver>>>
-              && sequence_receiver_of<_Receiver, __item_types_t<_Self, env_of_t<_Receiver>>>
-              && sequence_sender_to<__child_of<_Self>, __receiver_t<_Self, _Receiver>>
+                && sequence_receiver_of<_Receiver, __item_types_t<_Self, env_of_t<_Receiver>>>
+                && sequence_sender_to<__child_of<_Self>, __receiver_t<_Self, _Receiver>>
       static auto subscribe(_Self&& __self, _Receiver __rcvr) //
         noexcept(__nothrow_callable<__sexpr_apply_t, _Self, __subscribe_fn<_Receiver>>)
           -> __call_result_t<__sexpr_apply_t, _Self, __subscribe_fn<_Receiver>> {
